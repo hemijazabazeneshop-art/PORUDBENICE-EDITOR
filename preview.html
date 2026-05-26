@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<title>HemijaZaBazeneShop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f6fbfd;
+color:#071f38;
+}
+.app{
+max-width:1400px;
+margin:auto;
+padding:20px;
+}
+.layout{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+.panel{
+background:#fff;
+border:1px solid #dcebf1;
+border-radius:16px;
+padding:16px;
+}
+textarea{
+width:100%;
+height:650px;
+border:1px solid #dcebf1;
+border-radius:12px;
+padding:14px;
+font-family:Consolas,monospace;
+font-size:13px;
+resize:vertical;
+}
+.toolbar{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin:12px 0;
+}
+button{
+border:none;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+font-weight:700;
+}
+.primary{background:#08b6d4;color:#fff}
+.dark{background:#071f38;color:#fff}
+.red{background:#ef4444;color:#fff}
+.light{background:#e9f8fb;color:#07527e}
+
+#preview{
+min-height:760px;
+border:1px solid #dcebf1;
+border-radius:12px;
+padding:22px;
+overflow:auto;
+background:#fff;
+outline:none;
+}
+
+.notice{
+margin-top:10px;
+padding:10px;
+background:#fff8e8;
+border:1px solid #fde7af;
+border-radius:10px;
+font-size:12px;
+}
+
+@media(max-width:900px){
+.layout{
+grid-template-columns:1fr;
+}
+}
+
+@media print{
+.toolbar,.notice,.left-panel{
+display:none!important;
+}
+body{
+background:#fff;
+}
+#preview{
+border:none!important;
+padding:0!important;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<div class="layout">
+
+<div class="panel left-panel">
+
+<h2>HTML kod</h2>
+
+<textarea id="htmlInput"></textarea>
+
+<div class="toolbar">
+<button class="primary" onclick="renderHtml()">Prikaži</button>
+<button class="light" onclick="loadExample()">Primer</button>
+<button class="red" onclick="clearAll()">Obriši</button>
+</div>
+
+<div class="notice">
+Nalepi HTML kod porudžbenice i klikni “Prikaži”.
+</div>
+
+</div>
+
+<div class="panel">
+
+
+<div class="toolbar">
+<button class="light" onclick="execCmd('bold')">B</button>
+<button class="light" onclick="execCmd('italic')">I</button>
+<button class="light" onclick="execCmd('underline')">U</button>
+
+<button class="light" onclick="increaseSelected()">A+</button>
+<button class="light" onclick="decreaseSelected()">A-</button>
+
+<button class="light" onclick="addRow()">+ Red</button>
+<button class="light" onclick="removeRow()">- Red</button>
+
+<button class="dark" onclick="downloadPdf()">Preuzmi PDF</button>
+<button class="primary" onclick="saveHtml()">Save HTML</button>
+</div>
+
+<div id="preview" contenteditable="true">
+Ovde će se prikazati porudžbenica.
+</div>
+
+<div class="notice">
+Za PDF koristi Chrome ili Edge. PDF se automatski preuzima.
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+const example = `<!doctype html>
+<html>
+<head>
+<style>
+body { font-family: Arial, sans-serif; color: #071f38; padding: 28px; }
+h1 { margin: 0 0 18px; font-size: 24px; }
+.shop-success-box { margin-bottom: 16px; padding: 14px; border: 1px solid #dcebf1; border-radius: 10px; background: #f8fcfe; line-height: 1.6; }
+.shop-success-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+.shop-success-table th, .shop-success-table td { padding: 10px; border: 1px solid #dcebf1; text-align: left; }
+.shop-success-table th { background: #f1fbfd; }
+.shop-success-total { margin-top: 16px; text-align: right; font-size: 20px; font-weight: 900; }
+</style>
+</head>
+<body>
+
+<h1>Otpremnica</h1>
+
+<div class="shop-success-box">
+<strong>Kupac:</strong> Nenad Spasic
+</div>
+
+<table class="shop-success-table">
+<tr>
+<th>Proizvod</th>
+<th>Količina</th>
+<th>Cena</th>
+</tr>
+
+<tr>
+<td>Diacal odstranjivač kamenca</td>
+<td>1</td>
+<td>999 RSD</td>
+</tr>
+
+</table>
+
+</body>
+</html>`;
+
+function extractBody(html){
+const match = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+return match ? match[1] : html;
+}
+
+function extractStyles(html){
+const styles = html.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+return styles ? styles.join("\n") : "";
+}
+
+function renderHtml(){
+const html = document.getElementById("htmlInput").value.trim();
+
+if(!html){
+alert("Nalepi HTML.");
+return;
+}
+
+document.getElementById("preview").innerHTML =
+extractStyles(html) + extractBody(html);
+}
+
+function execCmd(cmd){
+document.execCommand(cmd,false,null);
+}
+
+function increaseSelected(){
+document.execCommand("fontSize", false, 5);
+
+const fonts = document.querySelectorAll("font[size='5']");
+fonts.forEach(f=>{
+f.removeAttribute("size");
+f.style.fontSize="22px";
+});
+}
+
+function decreaseSelected(){
+document.execCommand("fontSize", false, 2);
+
+const fonts = document.querySelectorAll("font[size='2']");
+fonts.forEach(f=>{
+f.removeAttribute("size");
+f.style.fontSize="12px";
+});
+}
+
+function addRow(){
+const table = document.querySelector("#preview table");
+
+if(!table){
+alert("Nema tabele.");
+return;
+}
+
+const row = table.insertRow(-1);
+
+for(let i=0;i<table.rows[0].cells.length;i++){
+const cell = row.insertCell(i);
+cell.innerHTML = "Novo";
+cell.style.border = "1px solid #dcebf1";
+cell.style.padding = "10px";
+}
+}
+
+function removeRow(){
+const table = document.querySelector("#preview table");
+
+if(!table){
+alert("Nema tabele.");
+return;
+}
+
+if(table.rows.length <= 2){
+alert("Ne može više da se briše.");
+return;
+}
+
+table.deleteRow(-1);
+}
+
+function saveHtml(){
+const content = document.getElementById("preview").innerHTML;
+
+const html = `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Porudžbenica</title>
+</head>
+<body>
+${content}
+</body>
+</html>`;
+
+const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+const url = URL.createObjectURL(blob);
+
+const a = document.createElement("a");
+a.href = url;
+a.download = "porudzbenica.html";
+a.click();
+
+URL.revokeObjectURL(url);
+}
+
+function downloadPdf(){
+const originalTitle = document.title;
+document.title = "porudzbenica";
+
+setTimeout(()=>{
+window.print();
+document.title = originalTitle;
+},100);
+}
+
+function loadExample(){
+document.getElementById("htmlInput").value = example;
+renderHtml();
+}
+
+function clearAll(){
+document.getElementById("htmlInput").value="";
+document.getElementById("preview").innerHTML="Ovde će se prikazati porudžbenica.";
+}
+</script>
+
+</body>
+</html>
