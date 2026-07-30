@@ -2,56 +2,186 @@
 <html lang="sr">
 <head>
 <meta charset="utf-8">
-<title>Univerzalni HTML → Otpremnica</title>
+<title>Editor otpremnice</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%}
-body{font-family:Arial,Helvetica,sans-serif;background:#f4fafc;color:#071f38}
-.app{max-width:1220px;margin:0 auto;padding:30px 17px 60px}
-.layout{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:stretch}
-.panel{min-width:0;background:#fff;border:1px solid #d6e6ec;border-radius:15px;padding:14px}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f3f9fb;
+  color:#071f38;
+}
+.app{
+  max-width:1220px;
+  margin:0 auto;
+  padding:30px 17px;
+}
+.layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.panel{
+  background:#fff;
+  border:1px solid #d6e7ed;
+  border-radius:15px;
+  padding:14px;
+}
 .left-panel{display:flex;flex-direction:column}
-h2{margin:14px 0 16px;font-size:21px;line-height:1.2}
-textarea{display:block;width:100%;height:541px;border:1px solid #cfdee5;border-radius:4px;padding:9px 11px;font-family:Consolas,"Courier New",monospace;font-size:12px;line-height:1.25;resize:vertical;outline:none;color:#111;background:#fff}
-textarea:focus{border-color:#08b6d4;box-shadow:0 0 0 3px rgba(8,182,212,.08)}
-.toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:10px 0}
-.right-toolbar{margin:9px 0 10px}
-button{border:0;padding:8px 12px;min-height:30px;border-radius:9px;cursor:pointer;font-size:11px;font-weight:700}
-button:hover{opacity:.9}
-.primary{background:#08b6d4;color:#fff}.dark{background:#071f38;color:#fff}.red{background:#ef4444;color:#fff}.light{background:#e8f7fb;color:#07527e}
-.small{min-width:31px;padding-left:8px;padding-right:8px}
-.notice{margin-top:9px;padding:8px 9px;background:#fff8e8;border:1px solid #f1d58b;border-radius:9px;font-size:10px;line-height:1.4;color:#142d43}
-.notice.success{background:#eefbf4;border-color:#b9e7ca;color:#155d32}
-.notice.warning{background:#fff8e8;border-color:#f1d58b;color:#7a4d00}
-.option-line{display:flex;align-items:flex-start;gap:7px;margin-top:6px;font-size:11px;line-height:1.35;color:#244058}
-.option-line input{margin-top:1px}
-#preview{height:634px;border:1px solid #d2e2e8;border-radius:10px;padding:16px 18px 24px;overflow:auto;background:#fff;outline:none;color:#0a233c;font-size:12px;line-height:1.45}
-#preview:focus{border-color:#08b6d4}
-#preview h1{margin:0 0 14px!important;font-size:22px!important;line-height:1.25!important;font-weight:800!important;color:#071f38!important}
-#preview p{margin:3px 0!important}
-#preview .shop-success-box,#preview .source-box{margin:0 0 12px!important;padding:13px 12px!important;border:1px solid #d2e4ea!important;border-radius:9px!important;background:#f6fbfd!important;line-height:1.5!important;color:#0a233c!important}
-#preview .shop-success-box strong,#preview .source-box strong{font-weight:800!important}
-#preview table{width:100%!important;margin:14px 0 0!important;border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed!important;font-size:11px!important;color:#0a233c!important}
-#preview table th,#preview table td{border:1px solid #d1e2e8!important;padding:6px 8px!important;vertical-align:middle!important;overflow-wrap:anywhere!important}
-#preview table th{background:#edf9fc!important;font-weight:700!important;text-align:left!important}
-#preview table th:nth-child(1),#preview table td:nth-child(1){width:43%!important;text-align:left!important}
-#preview table th:nth-child(2),#preview table td:nth-child(2){width:19%!important;text-align:right!important}
-#preview table th:nth-child(3),#preview table td:nth-child(3){width:38%!important;text-align:right!important}
-#preview .shop-success-total{margin:12px 0 0!important;text-align:right!important;font-size:19px!important;line-height:1.2!important;font-weight:900!important;color:#071f38!important}
-#preview .shop-success-total small{font-size:9px!important;font-weight:700!important}
-#preview .source-box{margin-top:14px!important;background:#fbfdfe!important;font-size:10px!important}
-#preview .source-box pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.4;color:#3a5267}
-.empty-value{display:inline-block;min-width:80px;border-bottom:1px dotted #9fb3bf;color:#78909c}
-@media(max-width:900px){.app{padding:12px}.layout{grid-template-columns:1fr}textarea{height:450px}#preview{height:650px}}
+h2{
+  margin:14px 0 16px;
+  font-size:21px;
+  line-height:1.2;
+}
+#htmlInput{
+  width:100%;
+  height:541px;
+  padding:10px 12px;
+  border:1px solid #d2e2e8;
+  border-radius:10px;
+  outline:none;
+  resize:vertical;
+  color:#071f38;
+  background:#fff;
+  font-family:Consolas,Monaco,"Courier New",monospace;
+  font-size:12px;
+  line-height:1.35;
+  tab-size:2;
+}
+#htmlInput:focus,#preview:focus{
+  border-color:#08b6d4;
+  box-shadow:0 0 0 3px rgba(8,182,212,.09);
+}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  align-items:center;
+  margin:10px 0;
+}
+.preview-toolbar{margin-top:9px;margin-bottom:10px}
+button{
+  border:0;
+  min-height:30px;
+  padding:7px 12px;
+  border-radius:9px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:800;
+}
+button:hover{filter:brightness(.97)}
+.primary{background:#08b6d4;color:#fff}
+.dark{background:#071f38;color:#fff}
+.red{background:#ef4444;color:#fff}
+.light{background:#e8f7fb;color:#07527e}
+.small-btn{min-width:31px;padding-left:8px;padding-right:8px}
+.notice{
+  margin-top:9px;
+  padding:8px 9px;
+  border:1px solid #f2d792;
+  border-radius:9px;
+  background:#fff8e7;
+  color:#19344d;
+  font-size:10px;
+  line-height:1.4;
+}
+#preview{
+  min-height:635px;
+  padding:16px 18px 28px;
+  border:1px solid #d3e3e9;
+  border-radius:11px;
+  background:#fff;
+  color:#0a233c;
+  font-size:12px;
+  line-height:1.45;
+  outline:none;
+}
+#preview h1{
+  margin:0 0 14px;
+  color:#071f38;
+  font-size:22px;
+  line-height:1.25;
+  font-weight:900;
+}
+.otpremnica-box{
+  margin:0 0 12px;
+  padding:13px 12px;
+  border:1px solid #d3e5eb;
+  border-radius:10px;
+  background:#f7fbfd;
+  line-height:1.48;
+}
+.otpremnica-box strong{font-weight:800}
+.otpremnica-table{
+  width:100%;
+  margin:13px 0 0;
+  border-collapse:collapse;
+  table-layout:fixed;
+  font-size:11px;
+}
+.otpremnica-table th,.otpremnica-table td{
+  padding:7px 9px;
+  border:1px solid #d2e3e9;
+  vertical-align:middle;
+  overflow-wrap:anywhere;
+}
+.otpremnica-table th{
+  background:#edf9fc;
+  color:#092844;
+  font-weight:800;
+  text-align:left;
+}
+.otpremnica-table th:nth-child(1),.otpremnica-table td:nth-child(1){width:43%;text-align:left}
+.otpremnica-table th:nth-child(2),.otpremnica-table td:nth-child(2){width:19%;text-align:right}
+.otpremnica-table th:nth-child(3),.otpremnica-table td:nth-child(3){width:38%;text-align:right}
+.otpremnica-total{
+  margin:12px 0 0;
+  text-align:right;
+  color:#071f38;
+  font-size:19px;
+  line-height:1.3;
+  font-weight:900;
+}
+.otpremnica-total small{font-size:9px;font-weight:700}
+.empty-state{color:#52677a}
+.pdf-mode{
+  width:190mm!important;
+  min-height:auto!important;
+  padding:8mm!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+@media(max-width:900px){
+  .app{padding:12px}
+  .layout{grid-template-columns:1fr}
+  #htmlInput{height:430px}
+}
+@media(max-width:540px){
+  .panel{padding:10px;border-radius:12px}
+  #preview{padding:15px 10px 24px}
+  #preview h1{font-size:19px}
+  .otpremnica-table{font-size:9px}
+  .otpremnica-table th,.otpremnica-table td{padding:6px 4px}
+  button{font-size:10px;padding:7px 9px}
+}
 @media print{
- @page{size:A4 portrait;margin:10mm}
- body{background:#fff}
- .left-panel,.toolbar,.notice,.option-line{display:none!important}
- .app,.panel{margin:0!important;padding:0!important;border:0!important;max-width:none!important}
- .layout{display:block!important}
- #preview{height:auto!important;overflow:visible!important;border:0!important;padding:0!important}
- .source-box.no-print{display:none!important}
+  @page{size:A4 portrait;margin:10mm}
+  body{background:#fff}
+  body *{visibility:hidden!important}
+  #preview,#preview *{visibility:visible!important}
+  #preview{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    min-height:0;
+    padding:0;
+    border:0;
+    border-radius:0;
+  }
 }
 </style>
 </head>
@@ -60,491 +190,343 @@ button:hover{opacity:.9}
   <div class="layout">
     <section class="panel left-panel">
       <h2>HTML kod</h2>
-      <textarea id="htmlInput" spellcheck="false" placeholder="Nalepi HTML kod porudžbenice, korpe, emaila ili stranice..."></textarea>
+      <textarea id="htmlInput" spellcheck="false" placeholder="Nalepi HTML porudžbenice ovde..."></textarea>
       <div class="toolbar">
-        <button class="primary" onclick="renderHtml()">Pretvori u otpremnicu</button>
-        <button class="light" onclick="loadExample()">Primer</button>
-        <button class="red" onclick="clearAll()">Obriši</button>
+        <button class="primary" type="button" onclick="convertOrder()">Prikaži</button>
+        <button class="light" type="button" onclick="loadExample()">Primer</button>
+        <button class="red" type="button" onclick="clearAll()">Obriši</button>
       </div>
-      <label class="option-line"><input id="includeSource" type="checkbox" checked> Ako struktura nije prepoznata, sačuvaj vidljiv tekst iz originalnog HTML-a u odeljku „Dodatni podaci“.</label>
-      <div class="notice">Radi sa statičkim HTML-om. Podaci koje stranica učitava tek preko JavaScript-a ili spoljnog API-ja ne postoje u nalepljenom kodu i ne mogu se automatski izvući.</div>
+      <div class="notice">Nalepi HTML kod porudžbenice i klikni „Prikaži“.</div>
     </section>
 
     <section class="panel">
-      <div class="toolbar right-toolbar">
-        <button class="light small" onclick="execCmd('bold')">B</button>
-        <button class="light small" onclick="execCmd('italic')">I</button>
-        <button class="light small" onclick="execCmd('underline')">U</button>
-        <button class="light small" onclick="changeSize(1)">A+</button>
-        <button class="light small" onclick="changeSize(-1)">A-</button>
-        <button class="light" onclick="addRow()">+ Red</button>
-        <button class="light" onclick="removeRow()">- Red</button>
-        <button class="dark" onclick="downloadPdf()">Preuzmi PDF</button>
-        <button class="primary" onclick="saveHtml()">Sačuvaj HTML</button>
+      <div class="toolbar preview-toolbar">
+        <button class="light small-btn" type="button" onclick="execCmd('bold')">B</button>
+        <button class="light small-btn" type="button" onclick="execCmd('italic')">I</button>
+        <button class="light small-btn" type="button" onclick="execCmd('underline')">U</button>
+        <button class="light small-btn" type="button" onclick="changeFontSize('increase')">A+</button>
+        <button class="light small-btn" type="button" onclick="changeFontSize('decrease')">A-</button>
+        <button class="light" type="button" onclick="addRow()">+ Red</button>
+        <button class="light" type="button" onclick="removeRow()">- Red</button>
+        <button class="dark" type="button" onclick="downloadPdf()">Preuzmi PDF</button>
+        <button class="primary" type="button" onclick="saveHtml()">Save HTML</button>
       </div>
-      <div id="preview" contenteditable="true" spellcheck="false">Ovde će se prikazati otpremnica.</div>
-      <div id="resultNotice" class="notice">Nalepi kod levo i klikni „Pretvori u otpremnicu“.</div>
+      <div id="preview" contenteditable="true" spellcheck="false"><span class="empty-state">Ovde će se prikazati otpremnica.</span></div>
+      <div class="notice">Za PDF koristi Chrome ili Edge. Sadržaj desno možeš ručno menjati.</div>
     </section>
   </div>
 </div>
 
 <script>
-const input = document.getElementById('htmlInput');
+const htmlInput = document.getElementById('htmlInput');
 const preview = document.getElementById('preview');
-const resultNotice = document.getElementById('resultNotice');
-const includeSource = document.getElementById('includeSource');
 
 const example = `<!doctype html>
-<html lang="sr"><body>
-<div class="order-card">
-  <div><b>Broj narudžbine:</b> BH-20260728-142449-535</div>
-  <div><b>Datum:</b> 28. 7. 2026. 14:24:49</div>
-  <div><b>Kupac:</b> Dejan Ristić</div>
-  <div><b>Telefon:</b> 062760276</div>
-  <div><b>Email:</b> dekipuma@mts.rs</div>
-  <div><b>Adresa:</b> Ivana Milutinovića 3</div>
-  <div><b>Grad:</b> Vladičin Han</div>
-  <div><b>Poštanski broj:</b> 17510</div>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Porudžbenica BH-20260727-065541-110</title>
+</head>
+<body>
+<h1>Porudžbenica - Bazenska hemija</h1>
+<div class="shop-success-box">
+<strong>Broj porudžbine:</strong> BH-20260727-065541-110<br>
+<strong>Datum:</strong> 27. 7. 2026. 06:55:41<br>
+<strong>Status:</strong> Upit za porudžbinu je poslat prodavcu.
 </div>
-<ul class="cart-items">
-  <li class="cart-item"><span class="product-name">Flokulant gel za bazene</span> <span class="quantity">10 kom</span> <span class="line-total">7.590 RSD</span></li>
-  <li class="cart-item"><span class="product-name">Gel za čišćenje</span> <span class="quantity">1 kom</span> <span class="line-total">2.184 RSD</span></li>
-</ul>
-<div><strong>Ukupno:</strong> 9.774 RSD</div>
-</body></html>`;
+<div class="shop-success-box">
+<strong>Kupac:</strong> Slobodanka Milićević<br>
+<strong>Telefon:</strong> 0603234663<br>
+<strong>Email:</strong> natasadjordjevic60@gmail.com<br>
+<strong>Mesto / grad:</strong> Valjevo<br>
+<strong>Poštanski broj:</strong> 14000<br>
+<strong>Ulica i broj:</strong> Šabački Put Bb<br>
+<strong>Ulaz / sprat / stan:</strong> Bb
+</div>
+<table class="shop-success-table">
+<thead><tr><th>Proizvod</th><th>Količina</th><th>Ukupno sa PDV-om</th></tr></thead>
+<tbody><tr><td>Algicid Diasa 5l</td><td>1</td><td>2.255 RSD</td></tr></tbody>
+</table>
+<div class="shop-success-total">Ukupno sa PDV-om: 2.255 RSD</div>
+<div class="shop-success-box"><strong>PDV:</strong> Sve cene uključuju PDV.</div>
+<div class="shop-success-box"><strong>Napomena:</strong> Ovo je potvrda poslatog upita.</div>
+</body>
+</html>`;
 
-const FIELD_ALIASES = {
-  orderNo: ['broj porudzbine','broj narudzbine','broj narucivanja','broj racuna','broj dokumenta','sifra porudzbine','order number','order no','order id','order code','invoice number','id porudzbine','narudzbina broj','porudzbina broj'],
-  date: ['datum porudzbine','datum narudzbine','datum i vreme','vreme porudzbine','datum izdavanja','datum','order date','created at','date'],
-  status: ['status porudzbine','status narudzbine','status placanja','status'],
-  customer: ['ime i prezime','ime kupca','naziv kupca','kupac','narucilac','primalac','primaoc','customer name','customer','billing name','shipping name','client'],
-  phone: ['broj telefona','telefon kupca','kontakt telefon','mobilni','telefon','phone number','phone','tel'],
-  email: ['email adresa','e mail adresa','elektronska posta','email','e mail','mail'],
-  city: ['mesto grad','grad mesto','mesto isporuke','grad isporuke','mesto','grad','city','town'],
-  postal: ['postanski broj','postanski kod','zip code','postal code','zip'],
-  address: ['ulica i broj','adresa isporuke','adresa kupca','shipping address','billing address','adresa','address','street'],
-  apartment: ['ulaz sprat stan','ulaz i sprat','sprat i stan','broj stana','ulaz','sprat stan','apartment'],
-  company: ['naziv firme','kompanija','firma','company'],
-  pib: ['pib','poreski broj','tax id','vat id'],
-  note: ['napomena kupca','napomena','note','comment']
-};
+function firstHtmlDocument(source){
+  const match = source.match(/<!doctype[\s\S]*?<\/html>/i) || source.match(/<html[\s\S]*?<\/html>/i);
+  return match ? match[0] : source;
+}
 
-const HEADER_ALIASES = {
-  product: ['proizvod','artikal','naziv artikla','naziv proizvoda','stavka','opis proizvoda','opis','product name','product','item name','item'],
-  quantity: ['kolicina','komada','kom','qty','quantity','amount'],
-  total: ['ukupno sa pdv om','ukupna cena','ukupna vrednost','vrednost','iznos','line total','subtotal','ukupno','total'],
-  price: ['jedinicna cena','cena po komadu','cena','cijena','unit price','price']
-};
+function parseSource(source){
+  return new DOMParser().parseFromString(firstHtmlDocument(source), 'text/html');
+}
 
-function normalize(value){
+function cleanText(value){
+  return String(value || '').replace(/\u00a0/g,' ').replace(/[ \t]+/g,' ').replace(/\s*\n\s*/g,' ').trim();
+}
+
+function escapeHtml(value){
   return String(value || '')
-    .toLowerCase().replace(/đ/g,'dj').replace(/[čć]/g,'c').replace(/š/g,'s').replace(/ž/g,'z')
-    .replace(/&nbsp;/g,' ').replace(/[^a-z0-9@./+\- ]+/g,' ').replace(/\s+/g,' ').trim();
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
 }
-function cleanText(value){return String(value || '').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim()}
-function escapeHtml(value){return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
-function unique(items){return [...new Set(items.map(cleanText).filter(Boolean))]}
 
-function aliasScore(label, aliases){
-  const n = normalize(label).replace(/[:\-]+$/,'').trim();
-  if(!n) return 0;
-  let best = 0;
-  for(const alias of aliases){
-    if(n === alias) best = Math.max(best,100 + alias.length);
-    else if(n.startsWith(alias + ' ') || n.endsWith(' ' + alias)) best = Math.max(best,80 + alias.length);
-    else if(alias.length >= 4 && n.includes(alias)) best = Math.max(best,55 + alias.length);
+function getLabelValue(root, label){
+  const normalizedLabel = label.toLocaleLowerCase('sr');
+  const strongs = [...root.querySelectorAll('strong')];
+  const target = strongs.find(el => cleanText(el.textContent).replace(/:$/,'').toLocaleLowerCase('sr') === normalizedLabel);
+  if(!target) return '';
+
+  let value = '';
+  let node = target.nextSibling;
+  while(node){
+    if(node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') break;
+    if(node.nodeType === Node.ELEMENT_NODE && node.tagName === 'STRONG') break;
+    value += node.textContent || '';
+    node = node.nextSibling;
   }
-  return best;
+  return cleanText(value.replace(/^\s*:\s*/,''));
 }
-function canonicalField(label){
-  let winner = null, score = 0;
-  for(const [key,aliases] of Object.entries(FIELD_ALIASES)){
-    const s = aliasScore(label,aliases);
-    if(s > score){score=s;winner=key}
+
+function findInfoBox(doc, requiredLabel){
+  return [...doc.querySelectorAll('.shop-success-box, div, section')].find(box => {
+    return [...box.querySelectorAll(':scope > strong, strong')].some(strong =>
+      cleanText(strong.textContent).replace(/:$/,'').toLocaleLowerCase('sr') === requiredLabel.toLocaleLowerCase('sr')
+    );
+  }) || doc.body;
+}
+
+function extractItems(doc){
+  const table = doc.querySelector('.shop-success-table') || doc.querySelector('table');
+  if(!table) return [];
+
+  const rows = [...table.querySelectorAll('tbody tr')];
+  const sourceRows = rows.length ? rows : [...table.querySelectorAll('tr')].slice(1);
+
+  return sourceRows.map(row => {
+    const cells = [...row.querySelectorAll('td')];
+    if(cells.length < 2) return null;
+    return {
+      product: cleanText(cells[0].textContent),
+      quantity: cleanText(cells[1].textContent),
+      total: cleanText(cells[2]?.textContent || '')
+    };
+  }).filter(item => item && (item.product || item.quantity || item.total));
+}
+
+function extractTotal(doc, items){
+  const totalElement = doc.querySelector('.shop-success-total');
+  if(totalElement){
+    const text = cleanText(totalElement.textContent);
+    const withoutLabel = text.replace(/^ukupno(?:\s+sa\s+pdv-?om)?\s*:\s*/i,'').trim();
+    if(withoutLabel) return withoutLabel;
   }
-  return score >= 55 ? winner : null;
-}
-function headerType(label){
-  let winner = null, score = 0;
-  for(const [type,aliases] of Object.entries(HEADER_ALIASES)){
-    const s = aliasScore(label,aliases);
-    if(s > score){score=s;winner=type}
-  }
-  return score >= 55 ? winner : null;
-}
-
-function parseJsonLd(doc){
-  const found = [];
-  doc.querySelectorAll('script[type="application/ld+json"]').forEach(script=>{
-    try{
-      const value = JSON.parse(script.textContent);
-      const stack = Array.isArray(value) ? [...value] : [value];
-      while(stack.length){
-        const item = stack.pop();
-        if(!item || typeof item !== 'object') continue;
-        found.push(item);
-        Object.values(item).forEach(v=>{if(v && typeof v === 'object') stack.push(v)});
-      }
-    }catch(_){ }
-  });
-  return found;
-}
-
-function getPlainLines(root){
-  const clone = root.cloneNode(true);
-  clone.querySelectorAll('script,style,noscript,iframe,svg,canvas,template').forEach(el=>el.remove());
-  clone.querySelectorAll('input,select,textarea').forEach(control=>{
-    const value = control.value || control.getAttribute('value') || control.textContent || '';
-    if(value) control.replaceWith(document.createTextNode(' ' + value + ' ')); else control.remove();
-  });
-  clone.querySelectorAll('br').forEach(br=>br.replaceWith('\n'));
-  clone.querySelectorAll('tr').forEach(tr=>tr.append('\n'));
-  clone.querySelectorAll('td,th').forEach(cell=>cell.append('\t'));
-  clone.querySelectorAll('p,div,section,article,header,footer,li,dt,dd,h1,h2,h3,h4,h5,h6').forEach(el=>{el.prepend('\n');el.append('\n')});
-  return (clone.textContent || '').split(/\n+/).map(cleanText).filter(Boolean);
-}
-
-function collectKeyValues(doc){
-  const pairs = [];
-  const add = (label,value,source='')=>{
-    const l=cleanText(label), v=cleanText(value);
-    if(l && v && l !== v && v.length < 1000) pairs.push({label:l,value:v,source});
-  };
-
-  doc.querySelectorAll('tr').forEach(row=>{
-    const cells=[...row.cells].map(c=>cleanText(c.textContent));
-    if(cells.length>=2) add(cells[0],cells.slice(1).join(' '),'table');
-  });
-  doc.querySelectorAll('dt').forEach(dt=>{
-    const dd=dt.nextElementSibling;
-    if(dd && dd.tagName==='DD') add(dt.textContent,dd.textContent,'dl');
-  });
-  doc.querySelectorAll('label').forEach(label=>{
-    const forId=label.getAttribute('for');
-    const control=(forId && doc.getElementById(forId)) || label.querySelector('input,select,textarea') || label.nextElementSibling;
-    if(control){
-      const value=control.value || control.getAttribute?.('value') || control.textContent;
-      add(label.textContent,value,'form-label');
-    }
-  });
-  doc.querySelectorAll('input,select,textarea').forEach(control=>{
-    const value=control.value || control.getAttribute('value') || control.querySelector?.('option:checked')?.textContent || control.textContent;
-    const label=control.getAttribute('aria-label') || control.getAttribute('placeholder') || control.getAttribute('name') || control.id;
-    add(label,value,'form-control');
-  });
-  doc.querySelectorAll('meta[name][content],meta[property][content]').forEach(meta=>add(meta.getAttribute('name') || meta.getAttribute('property'),meta.content,'meta'));
-  doc.querySelectorAll('strong,b,th').forEach(node=>{
-    const label=cleanText(node.textContent);
-    if(!canonicalField(label) && !headerType(label)) return;
-    let value='';
-    let current=node.nextSibling;
-    while(current){
-      if(current.nodeType===Node.ELEMENT_NODE && current.tagName==='BR') break;
-      value += ' ' + (current.textContent || '');
-      current=current.nextSibling;
-    }
-    if(!cleanText(value) && node.parentElement){
-      const parent=cleanText(node.parentElement.textContent);
-      const at=parent.indexOf(label);
-      if(at>=0) value=parent.slice(at+label.length);
-    }
-    add(label,cleanText(value).replace(/^\s*[:\-]\s*/,''),'bold-label');
-  });
-  doc.querySelectorAll('*').forEach(el=>{
-    for(const attr of [...el.attributes]){
-      if(attr.name.startsWith('data-') && attr.value && attr.value.length<500) add(attr.name.slice(5).replace(/[-_]/g,' '),attr.value,'data');
-    }
-  });
-  getPlainLines(doc.body).forEach(line=>{
-    const match=line.match(/^(.{1,80}?)[\s]*[:\-][\s]*(.+)$/);
-    if(match) add(match[1],match[2],'line');
-  });
-  return pairs;
-}
-
-function extractFields(doc,jsonLd){
-  const fields={}, scores={};
-  const set=(key,value,score)=>{
-    const v=cleanText(value).replace(/^[:\-]\s*/, '');
-    if(!key || !v || v.length>500) return;
-    if(!scores[key] || score>scores[key]){fields[key]=v;scores[key]=score}
-  };
-  collectKeyValues(doc).forEach(pair=>{
-    const key=canonicalField(pair.label);
-    if(key) set(key,pair.value,aliasScore(pair.label,FIELD_ALIASES[key]) + (pair.source==='form-label'?10:0));
-  });
-  jsonLd.forEach(obj=>{
-    if(obj.orderNumber) set('orderNo',obj.orderNumber,200);
-    if(obj.orderDate) set('date',obj.orderDate,200);
-    if(obj.orderStatus) set('status',obj.orderStatus,180);
-    const customer=obj.customer || obj.buyer || obj.billingAddress || obj.shippingAddress;
-    if(customer){
-      if(typeof customer==='string') set('customer',customer,180);
-      else{
-        set('customer',customer.name,190); set('phone',customer.telephone,190); set('email',customer.email,190);
-        set('address',customer.streetAddress,190); set('city',customer.addressLocality,190); set('postal',customer.postalCode,190);
-      }
-    }
-  });
-  return fields;
-}
-
-function priceMatches(text){
-  return cleanText(text).match(/(?:^|\s)(?:RSD|DIN|EUR|€|USD|\$)?\s*[-+]?\d{1,3}(?:[.\s]\d{3})*(?:,\d{1,2})?\s*(?:RSD|DIN|EUR|€|USD|\$)?(?:\s|$)/gi) || [];
-}
-function looksLikeQuantity(text){return /(?:^|\s)(?:x\s*)?\d+(?:[.,]\d+)?\s*(?:kom|komada|pcs|piece|kg|g|l|ml)?(?:\s|$)/i.test(cleanText(text))}
-function isSummaryRow(name){
-  const n=normalize(name);
-  return ['ukupno','total','subtotal','medjuzbir','porez','pdv','dostava','shipping','popust','discount'].some(x=>n===x || n.startsWith(x+' '));
-}
-
-function scoreAndDescribeTable(table){
-  const rows=[...table.rows];
-  if(rows.length<2) return null;
-  let best=null;
-  for(let r=0;r<Math.min(rows.length,6);r++){
-    const texts=[...rows[r].cells].map(c=>cleanText(c.textContent));
-    const types=texts.map(headerType);
-    const info={rowIndex:r,productIndex:types.indexOf('product'),quantityIndex:types.indexOf('quantity'),totalIndex:types.indexOf('total'),priceIndex:types.indexOf('price')};
-    let score=0;
-    if(info.productIndex>=0) score+=8;
-    if(info.quantityIndex>=0) score+=5;
-    if(info.totalIndex>=0) score+=6;
-    if(info.priceIndex>=0) score+=4;
-    if(!best || score>best.score) best={...info,score};
-  }
-  if(best && best.score>=13) return {...best,table,overallScore:best.score+Math.min(rows.length,12)};
-
-  let inferred=0,maxCols=0;
-  rows.forEach(row=>{
-    const cells=[...row.cells].map(c=>cleanText(c.textContent)); maxCols=Math.max(maxCols,cells.length);
-    if(cells.length>=2 && cells.some((c,i)=>i>0 && priceMatches(c).length) && cells.some(c=>/[a-zA-ZčćšđžČĆŠĐŽ]/.test(c))) inferred++;
-  });
-  if(inferred>=1 && maxCols>=2){
-    return {table,rowIndex:-1,productIndex:0,quantityIndex:maxCols>=3?1:-1,totalIndex:maxCols-1,priceIndex:-1,overallScore:7+inferred};
-  }
-  return null;
-}
-
-function extractItemsFromTables(doc){
-  const candidates=[...doc.querySelectorAll('table')].map(scoreAndDescribeTable).filter(Boolean).sort((a,b)=>b.overallScore-a.overallScore);
-  if(!candidates.length) return [];
-  const best=candidates[0], rows=[...best.table.rows].slice(best.rowIndex+1), items=[];
-  rows.forEach(row=>{
-    const cells=[...row.cells].map(c=>cleanText(c.textContent));
-    if(!cells.length) return;
-    const name=cells[best.productIndex] || '';
-    if(!name || isSummaryRow(name) || headerType(name)==='product') return;
-    const q=best.quantityIndex>=0 ? cells[best.quantityIndex] : '';
-    const pIndex=best.totalIndex>=0 ? best.totalIndex : best.priceIndex;
-    const total=pIndex>=0 ? cells[pIndex] : '';
-    if(name.length>300) return;
-    items.push({name,quantity:q || '1',total});
-  });
-  return items;
-}
-
-function smallestProductNodes(doc){
-  const selector='[class*="product" i],[class*="cart-item" i],[class*="order-item" i],[class*="line-item" i],[class*="basket-item" i],[data-product-id],[itemtype*="Product"]';
-  return [...doc.querySelectorAll(selector)].filter(node=>{
-    if(node.matches('table,tbody,thead')) return false;
-    const nested=[...node.querySelectorAll(selector)].filter(n=>n!==node);
-    return nested.length===0;
-  });
-}
-function extractItemsFromCards(doc){
-  const items=[];
-  smallestProductNodes(doc).forEach(node=>{
-    const all=cleanText(node.textContent);
-    if(!all || all.length>1200 || isSummaryRow(all)) return;
-    const nameNode=node.querySelector('[class*="name" i],[class*="title" i],[itemprop="name"],h1,h2,h3,h4,h5,strong,b,a');
-    let name=cleanText(nameNode?.textContent || '');
-    const qtyNode=node.querySelector('[class*="qty" i],[class*="quantity" i],[data-quantity],input[name*="qty" i],input[name*="quantity" i]');
-    let quantity=cleanText(qtyNode?.value || qtyNode?.getAttribute?.('data-quantity') || qtyNode?.textContent || '');
-    if(!quantity){const qm=all.match(/(?:kolicina|quantity|qty|kom|x)\s*[:x]?\s*(\d+(?:[.,]\d+)?)/i); if(qm) quantity=qm[1]}
-    const totals=[...node.querySelectorAll('[class*="total" i],[class*="price" i],[itemprop="price"]')].map(n=>cleanText(n.getAttribute('content') || n.textContent)).filter(v=>priceMatches(v).length);
-    let total=totals.at(-1) || priceMatches(all).at(-1) || '';
-    if(!name){
-      const parts=all.split(/\s{2,}|\n/).map(cleanText).filter(Boolean);
-      name=parts.find(p=>/[a-zA-ZčćšđžČĆŠĐŽ]/.test(p) && !priceMatches(p).length && !/kolicina|quantity|qty/i.test(normalize(p))) || '';
-    }
-    if(name && name.length<250) items.push({name,quantity:quantity || '1',total});
-  });
-  return items;
-}
-
-function extractItemsFromJsonLd(jsonLd){
-  const items=[];
-  jsonLd.forEach(obj=>{
-    const list=obj.orderedItem || obj.acceptedOffer || obj.itemListElement;
-    const arr=Array.isArray(list)?list:(list?[list]:[]);
-    arr.forEach(entry=>{
-      const item=entry.item || entry.orderedItem || entry;
-      const name=item?.name || entry.name;
-      const quantity=entry.orderQuantity || entry.quantity || item?.quantity || '1';
-      const total=entry.price || entry.priceSpecification?.price || item?.price || '';
-      if(name) items.push({name:cleanText(name),quantity:cleanText(quantity),total:cleanText(total)});
-    });
-  });
-  return items;
-}
-
-function extractItemsFromLines(doc){
-  const items=[];
-  getPlainLines(doc.body).forEach(line=>{
-    if(line.length<5 || line.length>250 || isSummaryRow(line)) return;
-    const prices=priceMatches(line);
-    if(!prices.length) return;
-    const lastPrice=cleanText(prices.at(-1));
-    let before=cleanText(line.slice(0,line.lastIndexOf(prices.at(-1))));
-    if(!/[a-zA-ZčćšđžČĆŠĐŽ]/.test(before)) return;
-    if(canonicalField(before.split(':')[0])) return;
-    let quantity='1';
-    const qm=before.match(/(?:\s|^)(?:x\s*)?(\d+(?:[.,]\d+)?)\s*(?:kom|komada|pcs|kg|g|l|ml)?\s*$/i);
-    if(qm){quantity=qm[1];before=cleanText(before.slice(0,qm.index))}
-    before=before.replace(/[|\-–—:]+$/,'').trim();
-    if(before.length>=2) items.push({name:before,quantity,total:lastPrice});
-  });
-  return items;
-}
-
-function dedupeItems(items){
-  const map=new Map();
-  items.forEach(item=>{
-    const name=cleanText(item.name), quantity=cleanText(item.quantity)||'1', total=cleanText(item.total);
-    if(!name || name.length>300) return;
-    const key=normalize(name)+'|'+normalize(quantity)+'|'+normalize(total);
-    if(!map.has(key)) map.set(key,{name,quantity,total});
-  });
-  return [...map.values()].slice(0,200);
-}
-
-function parseMoney(value){
-  let s=cleanText(value).replace(/[^0-9,.-]/g,'');
-  if(!s) return NaN;
-  const comma=s.includes(','), dot=s.includes('.');
-  if(comma&&dot){if(s.lastIndexOf(',')>s.lastIndexOf('.')) s=s.replace(/\./g,'').replace(',','.'); else s=s.replace(/,/g,'')}
-  else if(comma){const p=s.split(',');s=p.at(-1).length===3?p.join(''):s.replace(',','.')}
-  else if(dot){const p=s.split('.');if(p.length>2||p.at(-1).length===3)s=p.join('')}
-  return Number(s);
-}
-function extractTotal(doc,items,pairs,jsonLd){
-  for(const obj of jsonLd){
-    const value=obj.price || obj.totalPrice || obj.paymentDue || obj.priceSpecification?.price;
-    if(value!==undefined && value!==null && obj['@type'] && /order|invoice/i.test(String(obj['@type']))) return cleanText(value);
-  }
-  let best='';
-  pairs.forEach(pair=>{
-    const n=normalize(pair.label);
-    if((n==='ukupno'||n==='ukupan iznos'||n==='grand total'||n==='order total'||n==='total') && /\d/.test(pair.value)) best=pair.value;
-  });
-  if(best) return best;
-  for(const row of doc.querySelectorAll('tr')){
-    const cells=[...row.cells].map(c=>cleanText(c.textContent));
-    if(cells.length>=2 && isSummaryRow(cells[0]) && /ukupno|total/.test(normalize(cells[0]))){
-      const v=[...cells].reverse().find(c=>/\d/.test(c)); if(v) return v;
-    }
-  }
-  for(const line of getPlainLines(doc.body)){
-    const n=normalize(line);
-    if((n.startsWith('ukupno')||n.startsWith('ukupan iznos')||n.startsWith('grand total')||n.startsWith('order total')||n.startsWith('total')) && /\d/.test(line)){
-      const values=priceMatches(line); if(values.length) return cleanText(values.at(-1));
-      return cleanText(line.replace(/^[^0-9]*/,''));
-    }
-  }
-  const nums=items.map(i=>parseMoney(i.total)).filter(Number.isFinite);
-  if(nums.length && nums.length===items.filter(i=>i.total).length){return new Intl.NumberFormat('sr-RS',{maximumFractionDigits:2}).format(nums.reduce((a,b)=>a+b,0))+' RSD'}
+  if(items.length === 1 && items[0].total) return items[0].total;
   return '';
 }
 
-function parseOrder(html){
-  const doc=new DOMParser().parseFromString(html,'text/html');
-  const jsonLd=parseJsonLd(doc);
-  const pairs=collectKeyValues(doc);
-  const fields=extractFields(doc,jsonLd);
-  const items=dedupeItems([
-    ...extractItemsFromTables(doc),
-    ...extractItemsFromJsonLd(jsonLd),
-    ...extractItemsFromCards(doc),
-    ...extractItemsFromLines(doc)
-  ]);
-  const total=extractTotal(doc,items,pairs,jsonLd);
-  const sourceText=unique(getPlainLines(doc.body)).join('\n').slice(0,12000);
-  return {fields,items,total,sourceText};
-}
+function convertOrder(){
+  const source = htmlInput.value.trim();
+  if(!source){
+    alert('Nalepi HTML porudžbenice.');
+    htmlInput.focus();
+    return;
+  }
 
-function fieldLine(label,value){
-  return `<strong>${escapeHtml(label)}:</strong> ${value ? escapeHtml(value) : '<span class="empty-value">nije prepoznato</span>'}<br>`;
-}
-function buildOtpremnica(data){
-  const f=data.fields;
-  const itemRows=data.items.length
-    ? data.items.map(item=>`<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.quantity || '1')}</td><td>${escapeHtml(item.total || '')}</td></tr>`).join('')
-    : `<tr><td>Sadržaj proizvoda nije automatski prepoznat — proveri „Dodatne podatke“ ispod.</td><td>1</td><td></td></tr>`;
-  const sourceBox=includeSource.checked && data.sourceText
-    ? `<div class="source-box no-print"><strong>Dodatni podaci iz originalnog HTML-a:</strong><pre>${escapeHtml(data.sourceText)}</pre></div>` : '';
-  return `
+  const doc = parseSource(source);
+  const orderBox = findInfoBox(doc, 'Broj porudžbine');
+  const customerBox = findInfoBox(doc, 'Kupac');
+
+  const data = {
+    orderNumber: getLabelValue(orderBox, 'Broj porudžbine'),
+    date: getLabelValue(orderBox, 'Datum'),
+    customer: getLabelValue(customerBox, 'Kupac'),
+    phone: getLabelValue(customerBox, 'Telefon'),
+    email: getLabelValue(customerBox, 'Email'),
+    city: getLabelValue(customerBox, 'Mesto / grad'),
+    postalCode: getLabelValue(customerBox, 'Poštanski broj'),
+    address: getLabelValue(customerBox, 'Ulica i broj'),
+    apartment: getLabelValue(customerBox, 'Ulaz / sprat / stan')
+  };
+
+  const items = extractItems(doc);
+  const total = extractTotal(doc, items);
+
+  const rowsHtml = items.length
+    ? items.map(item => `
+      <tr>
+        <td>${escapeHtml(item.product)}</td>
+        <td>${escapeHtml(item.quantity)}</td>
+        <td>${escapeHtml(item.total)}</td>
+      </tr>`).join('')
+    : `<tr><td>Nije pronađen proizvod</td><td></td><td></td></tr>`;
+
+  preview.innerHTML = `
     <h1>Otpremnica - Bazenska hemija</h1>
-    <div class="shop-success-box">
-      ${fieldLine('Broj porudžbine',f.orderNo)}
-      ${fieldLine('Datum',f.date)}
-      <strong>Status:</strong> ${f.status ? escapeHtml(f.status) : '<span class="empty-value">nije prepoznato</span>'}
+
+    <div class="otpremnica-box">
+      <strong>Broj porudžbine:</strong> ${escapeHtml(data.orderNumber)}<br>
+      <strong>Datum:</strong> ${escapeHtml(data.date)}<br>
+      <strong>Status:</strong>
     </div>
-    <div class="shop-success-box">
-      ${fieldLine('Kupac',f.customer)}
-      ${fieldLine('Telefon',f.phone)}
-      ${fieldLine('Email',f.email)}
-      ${fieldLine('Mesto / grad',f.city)}
-      ${fieldLine('Poštanski broj',f.postal)}
-      ${fieldLine('Ulica i broj',f.address)}
-      <strong>Ulaz / sprat / stan:</strong> ${f.apartment ? escapeHtml(f.apartment) : '<span class="empty-value">nije prepoznato</span>'}
+
+    <div class="otpremnica-box">
+      <strong>Kupac:</strong> ${escapeHtml(data.customer)}<br>
+      <strong>Telefon:</strong> ${escapeHtml(data.phone)}<br>
+      <strong>Email:</strong> ${escapeHtml(data.email)}<br>
+      <strong>Mesto / grad:</strong> ${escapeHtml(data.city)}<br>
+      <strong>Poštanski broj:</strong> ${escapeHtml(data.postalCode)}<br>
+      <strong>Ulica i broj:</strong> ${escapeHtml(data.address)}<br>
+      <strong>Ulaz / sprat / stan:</strong> ${escapeHtml(data.apartment)}
     </div>
-    <table class="shop-success-table"><thead><tr><th>Proizvod</th><th>Količina</th><th>Ukupno sa PDV-om</th></tr></thead><tbody>${itemRows}</tbody></table>
-    <div class="shop-success-total">Ukupno: ${data.total ? escapeHtml(data.total) : '<span class="empty-value">nije prepoznato</span>'}<small> sa pdv</small></div>
-    ${sourceBox}`;
+
+    <table class="otpremnica-table">
+      <thead>
+        <tr>
+          <th>Proizvod</th>
+          <th>Količina</th>
+          <th>Ukupno sa PDV-om</th>
+        </tr>
+      </thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+
+    <div class="otpremnica-total">Ukupno: ${escapeHtml(total)} <small>sa pdv</small></div>
+  `;
 }
 
-function renderHtml(){
-  const html=input.value.trim();
-  if(!html){alert('Nalepi HTML kod.');return}
-  const data=parseOrder(html);
-  preview.innerHTML=buildOtpremnica(data);
-  const count=Object.values(data.fields).filter(Boolean).length;
-  const missing=[];
-  if(!data.fields.customer) missing.push('kupac');
-  if(!data.fields.address) missing.push('adresa');
-  if(!data.items.length) missing.push('proizvodi');
-  if(!data.total) missing.push('ukupno');
-  resultNotice.className=missing.length?'notice warning':'notice success';
-  resultNotice.textContent=`Otpremnica je napravljena. Prepoznato: ${count} polja i ${data.items.length} proizvoda.`+(missing.length?` Nije sigurno prepoznato: ${missing.join(', ')}; originalni tekst je sačuvan ispod za proveru.`:' Svi ključni podaci su prepoznati.');
+function execCmd(command){
+  preview.focus();
+  document.execCommand(command,false,null);
 }
-function execCmd(cmd){preview.focus();document.execCommand(cmd,false,null)}
-function changeSize(direction){
-  preview.focus();const selection=window.getSelection();
-  if(!selection||selection.isCollapsed){alert('Prvo označi tekst.');return}
-  const size=direction>0?5:2;document.execCommand('fontSize',false,size);
-  preview.querySelectorAll(`font[size="${size}"]`).forEach(f=>{f.removeAttribute('size');f.style.fontSize=direction>0?'18px':'10px'});
+
+function changeFontSize(direction){
+  preview.focus();
+  const selection = window.getSelection();
+  if(!selection || selection.rangeCount === 0 || selection.isCollapsed){
+    alert('Prvo označi tekst.');
+    return;
+  }
+  const temporarySize = direction === 'increase' ? '5' : '2';
+  const finalSize = direction === 'increase' ? '18px' : '10px';
+  document.execCommand('fontSize',false,temporarySize);
+  preview.querySelectorAll(`font[size="${temporarySize}"]`).forEach(font => {
+    font.removeAttribute('size');
+    font.style.fontSize = finalSize;
+  });
 }
+
+function getTable(){
+  return preview.querySelector('.otpremnica-table');
+}
+
 function addRow(){
-  const table=preview.querySelector('table');if(!table){alert('Nema tabele.');return}
-  const body=table.tBodies[0]||table.appendChild(document.createElement('tbody'));const row=body.insertRow(-1);
-  ['Novi proizvod','1','0 RSD'].forEach(v=>row.insertCell(-1).textContent=v);
+  const table = getTable();
+  if(!table){alert('Prvo napravi otpremnicu.');return;}
+  let tbody = table.tBodies[0];
+  if(!tbody){tbody = table.createTBody();}
+  const row = tbody.insertRow(-1);
+  ['Novi proizvod','1','0 RSD'].forEach(value => {
+    const cell = row.insertCell(-1);
+    cell.textContent = value;
+  });
 }
+
 function removeRow(){
-  const body=preview.querySelector('table')?.tBodies[0];if(!body){alert('Nema tabele.');return}
-  if(body.rows.length<=1){alert('Mora ostati najmanje jedan proizvod.');return}body.deleteRow(body.rows.length-1);
+  const table = getTable();
+  if(!table || !table.tBodies[0]){alert('Nema reda za brisanje.');return;}
+  const tbody = table.tBodies[0];
+  if(tbody.rows.length <= 1){alert('Mora ostati najmanje jedan proizvod.');return;}
+  tbody.deleteRow(tbody.rows.length - 1);
 }
-function documentCss(){return `*{box-sizing:border-box}body{margin:0;padding:28px;font-family:Arial,sans-serif;color:#0a233c;background:#fff}.document{max-width:800px;margin:auto;font-size:13px;line-height:1.45}.document h1{margin:0 0 18px;font-size:24px;color:#071f38}.shop-success-box,.source-box{margin:0 0 14px;padding:14px;border:1px solid #d2e4ea;border-radius:10px;background:#f6fbfd;line-height:1.5}.document table{width:100%;margin-top:14px;border-collapse:collapse;table-layout:fixed;font-size:12px}.document th,.document td{border:1px solid #d1e2e8;padding:8px 10px}.document th{background:#edf9fc;text-align:left}.document th:nth-child(1),.document td:nth-child(1){width:43%;text-align:left}.document th:nth-child(2),.document td:nth-child(2){width:19%;text-align:right}.document th:nth-child(3),.document td:nth-child(3){width:38%;text-align:right}.shop-success-total{margin-top:14px;text-align:right;font-size:20px;font-weight:900}.shop-success-total small{font-size:9px}.source-box{margin-top:14px;font-size:10px}.source-box pre{white-space:pre-wrap;font-family:Arial,sans-serif;font-size:10px}.empty-value{display:inline-block;min-width:80px;border-bottom:1px dotted #9fb3bf;color:#78909c}@media print{@page{size:A4 portrait;margin:12mm}body{padding:0}.source-box.no-print{display:none}}`}
+
+function filename(extension){
+  const numberText = preview.querySelector('.otpremnica-box')?.textContent || '';
+  const match = numberText.match(/BH-[A-Z0-9-]+/i);
+  const base = match ? `otpremnica-${match[0]}` : 'otpremnica';
+  return `${base}.${extension}`;
+}
+
+function documentCss(){
+  return `
+    *{box-sizing:border-box}
+    body{margin:0;padding:28px;font-family:Arial,Helvetica,sans-serif;color:#0a233c;background:#fff}
+    .document{max-width:800px;margin:0 auto;font-size:13px;line-height:1.45}
+    h1{margin:0 0 18px;color:#071f38;font-size:24px;line-height:1.25;font-weight:900}
+    .otpremnica-box{margin:0 0 14px;padding:14px;border:1px solid #d3e5eb;border-radius:10px;background:#f7fbfd;line-height:1.5}
+    .otpremnica-table{width:100%;margin-top:14px;border-collapse:collapse;table-layout:fixed;font-size:12px}
+    .otpremnica-table th,.otpremnica-table td{padding:8px 10px;border:1px solid #d2e3e9;vertical-align:middle;overflow-wrap:anywhere}
+    .otpremnica-table th{background:#edf9fc;font-weight:800;text-align:left}
+    .otpremnica-table th:nth-child(1),.otpremnica-table td:nth-child(1){width:43%;text-align:left}
+    .otpremnica-table th:nth-child(2),.otpremnica-table td:nth-child(2){width:19%;text-align:right}
+    .otpremnica-table th:nth-child(3),.otpremnica-table td:nth-child(3){width:38%;text-align:right}
+    .otpremnica-total{margin-top:14px;text-align:right;color:#071f38;font-size:20px;font-weight:900}
+    .otpremnica-total small{font-size:9px;font-weight:700}
+    @media print{@page{size:A4 portrait;margin:12mm}body{padding:0}}
+  `;
+}
+
 function saveHtml(){
-  const html=`<!doctype html><html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Otpremnica</title><style>${documentCss()}</style></head><body><main class="document">${preview.innerHTML}</main></body></html>`;
-  const blob=new Blob([html],{type:'text/html;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download='otpremnica.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500);
+  if(!preview.querySelector('h1')){alert('Prvo napravi otpremnicu.');return;}
+  const html = `<!doctype html><html lang="sr"><head><meta charset="utf-8"><title>Otpremnica</title><style>${documentCss()}</style></head><body><main class="document">${preview.innerHTML}</main></body></html>`;
+  const blob = new Blob([html],{type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename('html');
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function downloadPdf(){const old=document.title;document.title='otpremnica';window.print();setTimeout(()=>document.title=old,500)}
-function loadExample(){input.value=example;renderHtml()}
-function clearAll(){input.value='';preview.textContent='Ovde će se prikazati otpremnica.';resultNotice.className='notice';resultNotice.textContent='Nalepi kod levo i klikni „Pretvori u otpremnicu“.'}
-input.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();renderHtml()}});
-loadExample();
+
+async function downloadPdf(){
+  if(!preview.querySelector('h1')){alert('Prvo napravi otpremnicu.');return;}
+  if(typeof window.html2pdf !== 'function'){
+    window.print();
+    return;
+  }
+  preview.classList.add('pdf-mode');
+  preview.removeAttribute('contenteditable');
+  try{
+    await window.html2pdf().set({
+      margin:[8,8,8,8],
+      filename:filename('pdf'),
+      image:{type:'jpeg',quality:.98},
+      html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+      pagebreak:{mode:['css','legacy'],avoid:['tr','.otpremnica-box','.otpremnica-total']}
+    }).from(preview).save();
+  }catch(error){
+    console.error(error);
+    window.print();
+  }finally{
+    preview.classList.remove('pdf-mode');
+    preview.setAttribute('contenteditable','true');
+  }
+}
+
+function loadExample(){
+  htmlInput.value = example;
+  convertOrder();
+}
+
+function clearAll(){
+  htmlInput.value = '';
+  preview.innerHTML = '<span class="empty-state">Ovde će se prikazati otpremnica.</span>';
+  htmlInput.focus();
+}
+
+htmlInput.addEventListener('keydown',event => {
+  if(event.ctrlKey && event.key === 'Enter'){
+    event.preventDefault();
+    convertOrder();
+  }
+});
 </script>
 </body>
 </html>
